@@ -6,6 +6,7 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 from data_processing import WeatherDataLoader
 from supervised_models import SupervisedManager
 from belief_network import BeliefNetworkManager
+from csp_module import WeatherCSP
 
 # ============================
 # Funzione per etichette barre
@@ -93,6 +94,31 @@ def main():
     plt.ylim(0.7, 1.0)
     autolabel(rects, decimals=4)
     plt.show()
+
+    # ============================
+    # CSP REASONING
+    # ============================
+    print("\n=== START CSP REASONING ===")
+    # Uso della BN K2 per ottenere input al CSP
+    bn_pred = bn_manager_k2.inference.map_query(
+        variables=["Weather Type", "UV Index", "Temperature"],
+        evidence=None,
+        show_progress=False
+    )
+
+    weather = bn_pred["Weather Type"]
+    uv = bn_pred["UV Index"]
+    temp = bn_pred["Temperature"]
+
+    csp = WeatherCSP()
+    solution = csp.solve(weather, uv, temp)
+
+    print("\n--- CSP Solution ---")
+    print(f"Weather: {weather}")
+    print(f"UV Level: {uv}")
+    print(f"Temperature Class: {temp}")
+    print(f"Suggested Activity: {solution['Activity']}")
+    print(f"Suggested Outfit: {solution['Outfit']}")
 
     # ============================
     # CONFRONTO NUMERO ARCHI
