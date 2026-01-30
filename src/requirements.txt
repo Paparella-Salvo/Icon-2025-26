@@ -7,3 +7,4 @@ scikit-learn
 imbalanced-learn
 pgmpy==0.1.22
 networkx
+python-constraint
